@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button id="button">click</button>
+    <script>
+      const getBitmap = () =>
+    new Promise((resolve, reject) =>
+      fetch(
+        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAMSURBVBhXY2BgYAAAAAQAAVzN/2kAAAAASUVORK5CYII="
+      )
+        .then((res) => res.blob())
+        .then(async (data) => {
+          const bitmap = await createImageBitmap(data);
+          console.log("bitmap", bitmap);
+          resolve(bitmap);
+        })
+        .catch(reject)
+    );
+    const run = async () => {
+      const bitmap = await getBitmap();
+      const video = document.createElement("canvas");
+      video.getContext("2d").drawImage(bitmap, 0, 0);
+      const dummyTrack = video.captureStream();
+      const videoElement = document.createElement("video");
+      videoElement.srcObject = dummyTrack;
+      videoElement.play();
+      const videoTrack = videoElement.captureStream();
+    }
+    document.getElementById('button').addEventListener('click', run)
+    </script>
+  </body>
+</html>
